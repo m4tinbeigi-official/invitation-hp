@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hogwarts Acceptance Package - Interactive</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: English & Persian -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Dancing+Script:wght@500;700&family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+    <!-- html2canvas for exporting images -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --hogwarts-red: #740001;
+            --hogwarts-gold: #D3A625;
+            --ink-green: #1b4b36;
+        }
+
+        body {
+            background-color: #1a1a1a;
+            background-image: radial-gradient(circle at center, #2a2a2a 0%, #111 100%);
+            font-family: 'Cinzel', serif;
+            color: #333;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+        }
+
+        /* --- Persian Specific Font Overrides --- */
+        body.lang-fa {
+            font-family: 'Vazirmatn', sans-serif;
+        }
+        body.lang-fa .handwritten-ink, 
+        body.lang-fa .equipment-text {
+            font-family: 'Vazirmatn', sans-serif;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        body.lang-fa .cinzel-font {
+            font-family: 'Vazirmatn', sans-serif !important;
+        }
+        body.lang-fa .tracking-widest {
+            letter-spacing: normal !important;
+        }
+
+        /* --- Common Styles --- */
+        .cinzel-font { font-family: 'Cinzel', serif; }
+
+        .parchment-bg {
+            background-color: #f4eedc;
+            background-image: 
+                linear-gradient(90deg, transparent 50%, rgba(255,255,255,.5) 50%),
+                linear-gradient(rgba(255,255,255,.5) 50%, transparent 50%),
+                radial-gradient(circle at center, transparent 40%, rgba(138, 77, 15, 0.1) 100%),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            box-shadow: 
+                0 20px 40px rgba(0,0,0,0.5), 
+                inset 0 0 60px rgba(138, 77, 15, 0.4),
+                inset 0 0 10px rgba(138, 77, 15, 0.6);
+            border: 1px solid rgba(138, 77, 15, 0.3);
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .handwritten-ink {
+            font-family: 'Dancing Script', cursive;
+            color: var(--ink-green);
+            text-shadow: 0px 0px 1px rgba(27, 75, 54, 0.3);
+            font-size: 1.6rem;
+            line-height: 1.6;
+        }
+
+        .equipment-text {
+            color: var(--ink-green);
+            text-shadow: 0px 0px 1px rgba(27, 75, 54, 0.2);
+            font-size: 1rem;
+        }
+
+        .crest-placeholder {
+            width: 100px;
+            height: 120px;
+            margin: 0 auto;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'%3E%3Cpath d='M10 20 L50 0 L90 20 L90 80 Q50 120 10 80 Z' fill='none' stroke='%23333' stroke-width='2'/%3E%3Ctext x='50' y='65' font-family='serif' font-size='40' text-anchor='middle' fill='%23333'%3EH%3C/text%3E%3C/svg%3E") no-repeat center center;
+            background-size: contain;
+            opacity: 0.8;
+        }
+
+        .ticket-bg {
+            background-color: #e2c792;
+            background-image: 
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            position: relative;
+            margin: 0 auto; 
+        }
+
+        .gold-foil-border {
+            border: 12px solid #b8860b;
+            border-image: linear-gradient(45deg, #b8860b, #ffd700, #b8860b, #ffd700) 1;
+            padding: 15px;
+            position: relative;
+        }
+        
+        .gold-foil-border::after {
+            content: '';
+            position: absolute;
+            top: 5px; left: 5px; right: 5px; bottom: 5px;
+            border: 2px dashed #8b6508;
+            pointer-events: none;
+        }
+
+        .gold-text {
+            color: #d4af37;
+            text-shadow: 
+                -1px -1px 0 #5c4000,  
+                1px -1px 0 #5c4000,
+                -1px 1px 0 #5c4000,
+                1px 1px 0 #5c4000,
+                2px 2px 4px rgba(0,0,0,0.8);
+            background: linear-gradient(to bottom, #fff7a1 0%, #d4af37 50%, #8a6300 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- Movie Accurate Ticket Styles --- */
+        .ticket-movie-style {
+            background-color: #dfb873; /* Classic Mustard Gold */
+            border: 4px solid #111;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+        .ticket-movie-style::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px; height: 300px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'%3E%3Cpath d='M10 20 L50 0 L90 20 L90 80 Q50 120 10 80 Z' fill='none' stroke='%23a18042' stroke-width='1'/%3E%3Ctext x='50' y='65' font-family='serif' font-size='40' text-anchor='middle' fill='%23a18042'%3EH%3C/text%3E%3C/svg%3E") no-repeat center center;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+        .ticket-movie-border {
+            border: 2px solid #111;
+            margin: 4px;
+            height: calc(100% - 8px);
+            position: relative;
+            z-index: 2;
+        }
+
+        /* --- 3D Scene Setup --- */
+        .scene {
+            perspective: 1500px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 6rem 0;
+        }
+
+        .package-container {
+            position: relative;
+            width: 700px;
+            height: 450px;
+            transform-style: preserve-3d;
+            transition: transform 1s ease-in-out;
+            margin-top: 50px;
+        }
+
+        .package-container.show-front { transform: rotateY(180deg); }
+        .package-container.open-package { transform: rotateY(0deg) translateY(200px); }
+
+        .envelope-body {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            z-index: 10;
+        }
+
+        .envelope-front {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            transform: rotateY(180deg);
+            z-index: 20;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .envelope-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            z-index: 10;
+            background-color: #e8e2cd; 
+            overflow: visible; 
+        }
+
+        .envelope-back-seams {
+            position: absolute;
+            inset: 0;
+            border-left: 350px solid #dfd8c2;
+            border-right: 350px solid #dfd8c2;
+            border-bottom: 225px solid #d6cfb8;
+            border-top: 225px solid transparent; 
+            z-index: 12;
+            pointer-events: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%; 
+            transform-origin: top;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 15;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            background-color: #e5dfc5;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            padding-bottom: 20px;
+        }
+
+        .envelope-flap::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-color: #dcd5be;
+            transform: rotateX(180deg) translateZ(1px); 
+            backface-visibility: hidden;
+        }
+
+        .open-package .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 5; 
+        }
+
+        .wax-seal-realistic {
+            width: 90px;
+            height: 90px;
+            background: radial-gradient(circle at 35% 35%, #b51c1c 0%, #740001 50%, #3a0000 100%);
+            border-radius: 50% 45% 55% 48% / 50% 55% 45% 48%;
+            box-shadow: 
+                3px 5px 15px rgba(0,0,0,0.6), 
+                inset 2px 2px 8px rgba(255,100,100,0.4),
+                inset -4px -4px 10px rgba(0,0,0,0.6);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            transform: translateY(45px); 
+        }
+
+        .wax-seal-realistic:hover {
+            transform: translateY(45px) scale(1.05);
+            filter: brightness(1.2);
+        }
+
+        .open-package .wax-seal-realistic {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .wax-seal-realistic::before {
+            content: '';
+            position: absolute;
+            width: 65px; height: 65px;
+            border: 2px solid rgba(0,0,0,0.3);
+            border-radius: 50%;
+            box-shadow: inset 1px 1px 5px rgba(0,0,0,0.5);
+        }
+
+        .wax-seal-realistic span {
+            font-family: 'Cinzel', serif;
+            font-size: 40px;
+            font-weight: 800;
+            color: #4a0000;
+            text-shadow: 1px 1px 1px #a81c1c, -1px -1px 1px #2a0000;
+            z-index: 10;
+        }
+
+        .contents-container {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%) translateZ(-10px); 
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 8; 
+            opacity: 0;
+            transition: transform 1s ease-in-out, opacity 0.5s;
+        }
+
+        .open-package .contents-container {
+            opacity: 1;
+            z-index: 30; 
+            transform: translateX(-50%) translateY(-650px) translateZ(50px);
+        }
+
+        .content-item {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+        }
+
+        .export-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .open-package ~ .export-controls {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .btn {
+            background-color: rgba(30, 30, 30, 0.9);
+            color: #D3A625;
+            border: 1px solid #D3A625;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .btn:hover {
+            background-color: #D3A625;
+            color: #111;
+            transform: translateY(-2px);
+        }
+
+        #export-zone {
+            position: absolute;
+            left: -9999px;
+            top: 0;
+        }
+
+        #story-export-zone {
+            position: absolute;
+            left: -9999px;
+            top: 0;
+        }
+
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Page Watermark -->
+    <div id="page-watermark" class="fixed bottom-4 right-6 z-40 cinzel-font text-yellow-600/40 text-2xl tracking-widest pointer-events-none font-bold"></div>
+
+    <!-- Top Navigation Panel -->
+    <div class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-gray-900/90 text-gray-200 p-4 rounded-lg shadow-xl max-w-5xl w-full flex justify-between items-center z-50 border border-yellow-700/50 backdrop-blur-sm" dir="ltr">
+        <div class="flex items-center gap-4">
+            <div>
+                <h1 class="text-xl font-bold text-yellow-500 cinzel-font"><i class="fa-solid fa-hat-wizard mr-2"></i>Hogwarts Delivery</h1>
+                <p class="text-xs text-gray-400 mt-1" id="instruction-text">Click the Wax Seal to open the package!</p>
+            </div>
+            <!-- Language Toggle Button -->
+            <button id="btn-lang" class="btn text-xs px-3 py-1 bg-blue-900/50 border-blue-400 text-blue-200 hover:bg-blue-600 ml-4">
+                <i class="fa-solid fa-language"></i> فارسی
+            </button>
+        </div>
+        <div class="flex gap-4">
+            <button id="btn-flip" class="btn text-xs px-3 py-1">
+                <i class="fa-solid fa-rotate"></i> Flip Envelope
+            </button>
+            <div class="text-right text-xs font-mono bg-black/50 p-2 rounded border border-gray-700">
+                <div>Recipient: <span id="panel-name" class="text-green-400">Loading...</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3D Scene -->
+    <div class="scene">
+        <div class="package-container" id="package">
+            
+            <div class="envelope-body">
+                
+                <!-- IMAGE 3: ENVELOPE FRONT -->
+                <div class="envelope-front parchment-bg shadow-[inset_0_0_100px_rgba(0,0,0,0.1)]">
+                    <div id="envelope-front-content" class="handwritten-ink text-center text-3xl leading-relaxed">
+                        <p class="font-bold mb-4 text-4xl" id="env-name"></p>
+                        <p id="env-addr1"></p>
+                        <p id="env-addr2"></p>
+                        <p class="cinzel-font text-xl tracking-widest mt-4 opacity-80" id="env-addr3"></p>
+                    </div>
+                </div>
+
+                <!-- IMAGE 4: ENVELOPE BACK -->
+                <div class="envelope-back parchment-bg shadow-[inset_0_0_100px_rgba(0,0,0,0.2)]">
+                    <div class="envelope-back-seams"></div>
+                    <div class="envelope-flap" id="flap">
+                        <div class="wax-seal-realistic" id="wax-seal" title="Click to Open!">
+                            <span class="cinzel-font">H</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Inside Contents -->
+            <div class="contents-container" id="contents">
+                
+                <!-- 1: ACCEPTANCE LETTER -->
+                <div class="content-item parchment-bg w-[600px] p-12 flex flex-col relative" id="render-letter">
+                    <div class="text-center border-b-2 border-gray-400/50 pb-6 mb-8">
+                        <div class="crest-placeholder mb-4"></div>
+                        <h2 class="text-xl font-bold tracking-wider mb-2 cinzel-font" id="school-name"></h2>
+                        <p class="text-[10px] tracking-widest font-bold cinzel-font" id="headmaster"></p>
+                    </div>
+
+                    <div class="handwritten-ink flex-grow text-lg">
+                        <p class="mb-4"><span id="letter-greeting"></span> <span id="letter-name"></span>,</p>
+                        <p class="mb-4" style="text-indent: 2rem;" id="letter-body1"></p>
+                        <p class="mb-6" style="text-indent: 2rem;" id="letter-body2"></p>
+                        
+                        <div class="flex justify-end mt-8 pr-8" id="signature-block">
+                            <div class="text-end">
+                                <p class="mb-1" id="letter-closing"></p>
+                                <p class="font-['Dancing_Script'] text-3xl text-black -rotate-2 transform mb-1 opacity-90" id="deputy-sig">Minerva McGonagall</p>
+                                <p class="text-[10px] font-bold tracking-widest text-gray-700 cinzel-font uppercase" id="deputy-name"></p>
+                                <p class="text-xs cinzel-font" id="deputy-title"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 text-center">
+                        <div class="inline-block border-2 border-dashed border-red-800/60 p-3 rounded bg-red-900/5">
+                            <p class="font-mono font-bold text-red-900 tracking-widest text-sm mb-1"><span id="reg-label"></span> <span id="letter-code" dir="ltr" class="inline-block"></span></p>
+                            <p class="text-[10px] font-bold text-red-800" id="reg-sub"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2: SHOPPING LIST -->
+                <div class="content-item parchment-bg w-[600px] p-12 relative equipment-text" id="render-equipment">
+                    <div class="text-center mb-6">
+                        <h2 class="text-xl font-bold tracking-wider cinzel-font uppercase" id="eq-school-name"></h2>
+                        <h3 class="text-lg font-bold mt-2" id="eq-title"></h3>
+                    </div>
+                    
+                    <div id="equipment-body">
+                        <!-- Content injected via JS -->
+                    </div>
+                </div>
+
+                <!-- 3: THE TRAIN TICKET (Movie Accurate) -->
+                <div class="content-item ticket-movie-style w-[600px] h-[280px] p-2" id="render-ticket">
+                    <div class="ticket-movie-border w-full flex flex-col justify-between items-center py-4 px-10 text-center bg-transparent">
+                        <div class="space-y-1 w-full cinzel-font">
+                            <h3 class="text-2xl font-bold tracking-[0.15em] text-black uppercase" id="ticket-route"></h3>
+                            <p class="text-xs italic tracking-widest text-gray-900 font-serif" id="ticket-oneway"></p>
+                        </div>
+
+                        <div class="relative w-full flex justify-center items-center my-2">
+                            <h1 class="text-6xl font-extrabold z-10 cinzel-font text-black" style="text-shadow: 2px 2px 0px rgba(255,255,255,0.3);" id="ticket-platform"></h1>
+                        </div>
+
+                        <div class="w-full flex justify-between items-end text-black border-t border-black/20 pt-2 mt-2">
+                            <div class="text-start font-bold text-xs cinzel-font" id="ticket-date-container">
+                                <p><span id="ticket-date-lbl"></span> <span id="ticket-date"></span></p>
+                                <p><span id="ticket-time-lbl"></span> <span id="ticket-time" dir="ltr" class="inline-block"></span></p>
+                            </div>
+                            <div class="text-end" id="ticket-code-container">
+                                <p class="font-mono text-[10px] opacity-80 mb-1 cinzel-font" id="ticket-no-lbl"></p>
+                                <p class="font-mono font-bold text-lg tracking-wider" id="ticket-code" dir="ltr"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Buttons -->
+    <div class="export-controls cinzel-font" id="export-panel">
+        <button onclick="exportStory()" class="btn bg-gradient-to-r from-purple-900 to-indigo-900 border-purple-500 text-white shadow-[0_0_15px_rgba(139,92,246,0.5)] scale-110 mx-2 hover:from-purple-800 hover:to-indigo-800">
+            <i class="fa-brands fa-instagram"></i> <span id="btn-txt-story">Save as Story</span>
+        </button>
+        <button onclick="exportImage('render-letter', 'Hogwarts_Letter.png')" class="btn">
+            <i class="fa-solid fa-scroll"></i> <span id="btn-txt-letter">Save Letter</span>
+        </button>
+        <button onclick="exportImage('render-equipment', 'Hogwarts_Equipment.png')" class="btn">
+            <i class="fa-solid fa-list"></i> <span id="btn-txt-equip">Save Equipment</span>
+        </button>
+        <button onclick="exportImage('render-ticket', 'Hogwarts_Ticket.png')" class="btn">
+            <i class="fa-solid fa-ticket"></i> <span id="btn-txt-ticket">Save Ticket</span>
+        </button>
+        <button onclick="exportImage('envelope-front-clone', 'Envelope_Front.png')" class="btn">
+            <i class="fa-regular fa-envelope"></i> <span id="btn-txt-envf">Save Env Front</span>
+        </button>
+        <button onclick="exportImage('envelope-back-clone', 'Envelope_Back.png')" class="btn">
+            <i class="fa-solid fa-stamp"></i> <span id="btn-txt-envb">Save Wax Seal</span>
+        </button>
+    </div>
+
+    <!-- Hidden zones for cloning and export -->
+    <div id="export-zone"></div>
+    <div id="story-export-zone"></div>
+
+    <script>
+        // =================================================================
+        // 🔮 DATA & TRANSLATIONS
+        // =================================================================
+        const equipmentHTML_EN = `
+            <div class="mb-4">
+                <h4 class="font-bold text-lg mb-1 cinzel-font">UNIFORM</h4>
+                <p class="mb-1 text-sm">First-year students will require:</p>
+                <ul class="list-disc pl-6 space-y-1 text-sm mb-2">
+                    <li>Three sets of plain work robes (black)</li>
+                    <li>One plain pointed hat (black) for day wear</li>
+                    <li>One pair of protective gloves (dragon hide or similar)</li>
+                    <li>One winter cloak (black, silver fastenings)</li>
+                </ul>
+                <p class="italic text-xs font-bold">Please note that all pupils' clothes should carry name tags.</p>
+            </div>
+            
+            <div class="mb-4">
+                <h4 class="font-bold text-lg mb-1 cinzel-font">COURSE BOOKS</h4>
+                <p class="mb-1 text-sm">All students should have a copy of each of the following:</p>
+                <ul class="list-disc pl-6 space-y-1 text-sm italic">
+                    <li>The Standard Book of Spells (Grade 1) by Miranda Goshawk</li>
+                    <li>A History of Magic by Bathilda Bagshot</li>
+                    <li>Magical Theory by Adalbert Waffling</li>
+                    <li>A Beginner's Guide to Transfiguration by Emeric Switch</li>
+                    <li>One Thousand Magical Herbs and Fungi by Phyllida Spore</li>
+                    <li>Magical Drafts and Potions by Arsenius Jigger</li>
+                    <li>Fantastic Beasts and Where to Find Them by Newt Scamander</li>
+                    <li>The Dark Forces: A Guide to Self-Protection by Quentin Trimble</li>
+                </ul>
+            </div>
+
+            <div class="mb-4">
+                <h4 class="font-bold text-lg mb-1 cinzel-font">OTHER EQUIPMENT</h4>
+                <ul class="list-disc pl-6 space-y-1 text-sm mb-2">
+                    <li>1 wand <span class="text-xs italic">(costing 7 gold Galleons at Ollivanders)</span></li>
+                    <li>1 cauldron (pewter, standard size 2)</li>
+                    <li>1 set glass or crystal phials</li>
+                    <li>1 telescope (brass and collapsible)</li>
+                    <li>1 set brass scales</li>
+                </ul>
+            </div>
+
+            <div class="mb-4">
+                <h4 class="font-bold text-lg mb-1 cinzel-font">PETS & RESTRICTIONS</h4>
+                <ul class="list-disc pl-6 space-y-1 text-sm">
+                    <li>Students may also bring an owl OR a cat OR a toad.</li>
+                    <li class="uppercase font-bold">Parents are reminded that first years are not allowed their own broomsticks.</li>
+                </ul>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-gray-400/50">
+                <h4 class="font-bold text-sm mb-2 cinzel-font uppercase">Apothecary Prices (Reference)</h4>
+                <ul class="list-none text-xs space-y-1 opacity-80">
+                    <li>- Silver unicorn horn: 21 Galleons each</li>
+                    <li>- Beetle eyes: 5 Knuts a scoop</li>
+                    <li>- Dragon liver: 17 Sickles an ounce</li>
+                </ul>
+            </div>
+        `;
+
+        const equipmentHTML_FA = `
+            <div class="mb-4">
+                <h4 class="font-bold text-lg mb-1 cinzel-font">لباس فرم</h4>
+                <p class="mb-1 text-sm">دانش‌آموزان سال اول به اقلام زیر نیاز دارند:</p>
+                <ul class="list-disc pr-6 space-y-1 text-sm mb-2">
+                    <li>سه دست ردای کاری ساده (مشکی)</li>
+                    <li>یک کلاه ساده نوک‌تیز (مشکی) برای استفاده در روز</li>
+                    <li>یک جفت دستکش ایمنی (از پوست اژدها یا مشابه آن)</li>
+                    <li>یک شنل زمستانی (مشکی با گیره‌های نقره‌ای)</li>
+                </ul>
+                <p class="italic text-xs font-bold text-red-900">نکته مهم: روی تمام لباس‌های دانش‌آموزان باید برچسب نام و نام خانوادگی زده شود.</p>
+            </div>
+            
+            <div class="mb-4">
+                <h4 class="font-bold text-lg mb-1 cinzel-font">کتاب‌های درسی</h4>
+                <p class="mb-1 text-sm">هر دانش‌آموز باید یک نسخه از کتاب‌های زیر را تهیه کند:</p>
+                <ul class="list-disc pr-6 space-y-1 text-sm">
+                    <li>کتاب استاندارد وردها (سطح ۱) اثر میراندا گوشاک</li>
+                    <li>تاریخ جادوگری اثر باتیلدا بگشات</li>
+                    <li>نظریه جادویی اثر آدالبرت وافلینگ</li>
+                    <li>راهنمای تغییر شکل برای مبتدیان اثر امریک سوئیچ</li>
+                    <li>هزار گیاه و قارچ جادویی اثر فیلیدا اسپور</li>
+                    <li>معجون‌های جادویی اثر آرسنیوس جیگر</li>
+                    <li>جانوران شگفت‌انگیز و زیست‌گاه آن‌ها اثر نیوت اسکمندر</li>
+                    <li>نیروهای تاریک: راهنمایی برای دفاع از خود اثر کوئنتین تریمبل</li>
+                </ul>
+            </div>
+
+            <div class="mb-4">
+                <h4 class="font-bold text-lg mb-1 cinzel-font">سایر تجهیزات</h4>
+                <ul class="list-disc pr-6 space-y-1 text-sm mb-2">
+                    <li>یک چوبدستی <span class="text-xs text-gray-700">(قیمت در مغازه‌ی اولیواندر ۷ گالیون طلا است)</span></li>
+                    <li>یک پاتیل (از جنس آلیاژ قلع و سرب، اندازه استاندارد ۲)</li>
+                    <li>یک مجموعه بطری شیشه‌ای یا کریستالی</li>
+                    <li>یک تلسکوپ برنجی و تاشو</li>
+                    <li>یک ترازوی برنجی برای وزن کردن مواد معجون‌سازی</li>
+                </ul>
+            </div>
+
+            <div class="mb-4">
+                <h4 class="font-bold text-lg mb-1 cinzel-font">حیوانات خانگی و محدودیت‌ها</h4>
+                <ul class="list-disc pr-6 space-y-1 text-sm">
+                    <li>دانش‌آموزان مجاز هستند که یک جغد یا یک گربه یا یک وزغ همراه خود بیاورند.</li>
+                    <li class="font-bold text-red-900">به والدین یادآوری شده است که دانش‌آموزان سال اول اجازه ندارند جاروی پرنده شخصی داشته باشند.</li>
+                </ul>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-gray-400/50">
+                <h4 class="font-bold text-sm mb-2 cinzel-font">قیمت مواد اولیه در عطاری (جهت اطلاع)</h4>
+                <ul class="list-none text-xs space-y-1 opacity-80">
+                    <li>- شاخ نقره‌ای تک‌شاخ: هر عدد ۲۱ گالیون</li>
+                    <li>- چشم سوسک: هر پیمانه ۵ نات</li>
+                    <li>- جگر سیاه اژدها: هر سیر ۱۷ سیکل</li>
+                </ul>
+            </div>
+        `;
+
+        const packageData = {
+            en: {
+                letterName: "Rick Sanchez",
+                envelopeName: "Mr. R. Sanchez",
+                addressLine1: "The Garage Workbench,",
+                addressLine2: "Dimension C-137,",
+                addressLine3: "Multiverse",
+                travelDate: "Sunday, July 5, 2026", 
+                travelTime: "11:00 AM",             
+                ticketCode: "TK-9B34",              
+                registrationCode: "HW-77X1",
+                
+                // Letter translations
+                schoolName: "HOGWARTS SCHOOL of WITCHCRAFT and WIZARDRY",
+                headmaster: "HEADMASTER: ALBUS DUMBLEDORE",
+                greeting: "Dear Mr.",
+                body1: "We are pleased to inform you that you have a place at Hogwarts School of Witchcraft and Wizardry. Please find enclosed a list of all necessary books and equipment.",
+                body2: "Term begins on 1 September. We await your owl by no later than 31 July.",
+                closing: "Yours sincerely,",
+                deputyName: "MINERVA MCGONAGALL",
+                deputyTitle: "Deputy Headmistress",
+                regLabel: "REGISTRATION CODE:",
+                regSub: "(Must be entered during registration)",
+                
+                // Equipment translations
+                eqTitle: "REQUIREMENTS LIST",
+                eqContent: equipmentHTML_EN,
+
+                // Ticket translations
+                ticketRoute: "LONDON TO HOGWARTS",
+                ticketOneWay: "for ONE WAY travel",
+                ticketPlatform: "Platform 9 ¾",
+                ticketDateLbl: "DATE:",
+                ticketTimeLbl: "TIME:",
+                ticketNoLbl: "TICKET NO.",
+
+                // UI
+                btnLetter: "Save Letter",
+                btnEquip: "Save Equipment",
+                btnTicket: "Save Ticket",
+                btnEnvF: "Save Env Front",
+                btnEnvB: "Save Wax Seal",
+                btnStory: "Save as Story",
+                instructionClosed: "Click the Wax Seal to open the package!",
+                instructionFlip: "Envelope Front. Flip back to open.",
+                instructionOpen: "<span class='text-green-400'>Package Opened!</span> Scroll down to see contents."
+            },
+            fa: {
+                letterName: "ریک سانچز",
+                envelopeName: "آقای ر. سانچز",
+                addressLine1: "میز کار گاراژ،",
+                addressLine2: "بُعد C-137،",
+                addressLine3: "مولتی‌ورس",
+                travelDate: "یکشنبه، ۱۵ تیر ۱۴۰۵", 
+                travelTime: "۱۱:۰۰ صبح",             
+                ticketCode: "TK-9B34",              
+                registrationCode: "HW-77X1",
+                
+                // Letter translations
+                schoolName: "مدرسه علوم و فنون جادوگری هاگوارتز",
+                headmaster: "مدیر: آلبوس دامبلدور",
+                greeting: "جناب آقای",
+                body1: "با کمال مسرت به اطلاع می‌رسانیم که شما برای تحصیل در مدرسه علوم و فنون جادوگری هاگوارتز پذیرفته شده‌اید. لطفاً فهرست کتب و تجهیزات مورد نیاز را که ضمیمه شده است، ملاحظه فرمایید.",
+                body2: "سال تحصیلی از اول سپتامبر آغاز می‌شود. ما حداکثر تا ۳۱ ژوئیه منتظر جغد شما هستیم.",
+                closing: "با احترام،",
+                deputyName: "مینروا مک‌گوناگال",
+                deputyTitle: "معاون مدیر",
+                regLabel: "کد ثبت‌نام:",
+                regSub: "(حتماً در زمان ثبت‌نام وارد کنید)",
+
+                // Equipment translations
+                eqTitle: "فهرست تجهیزات مورد نیاز",
+                eqContent: equipmentHTML_FA,
+
+                // Ticket translations
+                ticketRoute: "لندن به هاگوارتز",
+                ticketOneWay: "برای سفر یک طرفه",
+                ticketPlatform: "سکو ۹ ¾",
+                ticketDateLbl: "تاریخ:",
+                ticketTimeLbl: "زمان:",
+                ticketNoLbl: "شماره بلیت:",
+
+                // UI
+                btnLetter: "ذخیره نامه",
+                btnEquip: "ذخیره لیست خرید",
+                btnTicket: "ذخیره بلیت",
+                btnEnvF: "ذخیره روی پاکت",
+                btnEnvB: "ذخیره پشت پاکت",
+                btnStory: "ذخیره استوری ویژه",
+                instructionClosed: "برای باز کردن روی مهر کلیک کنید!",
+                instructionFlip: "روی پاکت. برای باز کردن بچرخانید.",
+                instructionOpen: "<span class='text-green-400'>بسته باز شد!</span> به پایین اسکرول کنید."
+            }
+        };
+
+        // =================================================================
+        // UI AND INTERACTION LOGIC
+        // =================================================================
+        const pkg = document.getElementById('package');
+        const seal = document.getElementById('wax-seal');
+        const flipBtn = document.getElementById('btn-flip');
+        const langBtn = document.getElementById('btn-lang');
+        const instruction = document.getElementById('instruction-text');
+        
+        let isOpen = false;
+        let isFront = false;
+        let currentLang = 'en'; // Default to English
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateLanguageUI();
+        });
+
+        // Language Toggle
+        langBtn.addEventListener('click', () => {
+            currentLang = currentLang === 'en' ? 'fa' : 'en';
+            updateLanguageUI();
+            
+            if(currentLang === 'en') {
+                langBtn.innerHTML = '<i class="fa-solid fa-language"></i> فارسی';
+            } else {
+                langBtn.innerHTML = '<i class="fa-solid fa-language"></i> English';
+            }
+        });
+
+        function updateLanguageUI() {
+            const d = packageData[currentLang];
+            const isFa = currentLang === 'fa';
+            
+            // Apply language specifics to body
+            if (isFa) {
+                document.body.classList.add('lang-fa');
+                document.body.setAttribute('dir', 'rtl');
+                
+                // Adjust signatures & layout for RTL
+                document.getElementById('signature-block').classList.replace('justify-end', 'justify-start');
+                document.getElementById('ticket-date-container').classList.replace('text-start', 'text-right');
+                document.getElementById('ticket-code-container').classList.replace('text-end', 'text-left');
+                document.getElementById('envelope-front-content').setAttribute('dir', 'rtl');
+                document.getElementById('render-letter').setAttribute('dir', 'rtl');
+                document.getElementById('render-equipment').setAttribute('dir', 'rtl');
+                document.getElementById('render-ticket').setAttribute('dir', 'rtl');
+            } else {
+                document.body.classList.remove('lang-fa');
+                document.body.setAttribute('dir', 'ltr');
+                
+                document.getElementById('signature-block').classList.replace('justify-start', 'justify-end');
+                document.getElementById('ticket-date-container').classList.replace('text-right', 'text-start');
+                document.getElementById('ticket-code-container').classList.replace('text-left', 'text-end');
+                document.getElementById('envelope-front-content').setAttribute('dir', 'ltr');
+                document.getElementById('render-letter').setAttribute('dir', 'ltr');
+                document.getElementById('render-equipment').setAttribute('dir', 'ltr');
+                document.getElementById('render-ticket').setAttribute('dir', 'ltr');
+            }
+
+            // Watermark Update
+            const watermarkText = isFa ? 'potterhead.ir' : 'potterheads.org';
+            document.getElementById('page-watermark').textContent = watermarkText;
+
+            // Envelope updates
+            document.getElementById('env-name').textContent = d.envelopeName;
+            document.getElementById('env-addr1').textContent = d.addressLine1;
+            document.getElementById('env-addr2').textContent = d.addressLine2;
+            document.getElementById('env-addr3').textContent = d.addressLine3;
+            document.getElementById('panel-name').textContent = d.envelopeName;
+
+            // Letter updates
+            document.getElementById('school-name').textContent = d.schoolName;
+            document.getElementById('headmaster').textContent = d.headmaster;
+            document.getElementById('letter-greeting').textContent = d.greeting;
+            document.getElementById('letter-name').textContent = d.letterName;
+            document.getElementById('letter-body1').textContent = d.body1;
+            document.getElementById('letter-body2').textContent = d.body2;
+            document.getElementById('letter-closing').textContent = d.closing;
+            document.getElementById('deputy-name').textContent = d.deputyName;
+            document.getElementById('deputy-title').textContent = d.deputyTitle;
+            document.getElementById('reg-label').textContent = d.regLabel;
+            document.getElementById('letter-code').textContent = d.registrationCode;
+            document.getElementById('reg-sub').textContent = d.regSub;
+
+            // Equipment updates
+            document.getElementById('eq-school-name').textContent = d.schoolName;
+            document.getElementById('eq-title').textContent = d.eqTitle;
+            document.getElementById('equipment-body').innerHTML = d.eqContent;
+
+            // Ticket updates
+            document.getElementById('ticket-route').textContent = d.ticketRoute;
+            document.getElementById('ticket-oneway').textContent = d.ticketOneWay;
+            document.getElementById('ticket-platform').textContent = d.ticketPlatform;
+            document.getElementById('ticket-date-lbl').textContent = d.ticketDateLbl;
+            document.getElementById('ticket-date').textContent = d.travelDate;
+            document.getElementById('ticket-time-lbl').textContent = d.ticketTimeLbl;
+            document.getElementById('ticket-time').textContent = d.travelTime;
+            document.getElementById('ticket-no-lbl').textContent = d.ticketNoLbl;
+            document.getElementById('ticket-code').textContent = d.ticketCode;
+
+            // Buttons & Instructions
+            document.getElementById('btn-txt-letter').textContent = d.btnLetter;
+            document.getElementById('btn-txt-equip').textContent = d.btnEquip;
+            document.getElementById('btn-txt-ticket').textContent = d.btnTicket;
+            document.getElementById('btn-txt-envf').textContent = d.btnEnvF;
+            document.getElementById('btn-txt-envb').textContent = d.btnEnvB;
+            document.getElementById('btn-txt-story').textContent = d.btnStory;
+            
+            if(!isOpen) {
+                instruction.innerHTML = isFront ? d.instructionFlip : d.instructionClosed;
+            } else {
+                instruction.innerHTML = d.instructionOpen;
+            }
+
+            prepareExportClones();
+        }
+
+        // Flip Animation
+        flipBtn.addEventListener('click', () => {
+            if (isOpen) return;
+            isFront = !isFront;
+            const d = packageData[currentLang];
+            if (isFront) {
+                pkg.classList.add('show-front');
+                instruction.textContent = d.instructionFlip;
+            } else {
+                pkg.classList.remove('show-front');
+                instruction.textContent = d.instructionClosed;
+            }
+        });
+
+        // Open Animation
+        seal.addEventListener('click', () => {
+            if (isOpen) return;
+            isOpen = true;
+            pkg.classList.remove('show-front'); 
+            pkg.classList.add('open-package');
+            flipBtn.style.opacity = '0.5';
+            flipBtn.style.pointerEvents = 'none';
+            instruction.innerHTML = packageData[currentLang].instructionOpen;
+        });
+
+        // =================================================================
+        // EXPORT LOGIC (html2canvas)
+        // =================================================================
+        function prepareExportClones() {
+            const exportZone = document.getElementById('export-zone');
+            exportZone.innerHTML = ''; 
+            
+            const frontClone = document.querySelector('.envelope-front').cloneNode(true);
+            frontClone.id = 'envelope-front-clone';
+            frontClone.style.transform = 'none'; 
+            frontClone.style.position = 'relative';
+            frontClone.style.width = '700px';
+            frontClone.style.height = '450px';
+            exportZone.appendChild(frontClone);
+
+            const backClone = document.querySelector('.envelope-back').cloneNode(true);
+            backClone.id = 'envelope-back-clone';
+            backClone.style.transform = 'none';
+            backClone.style.position = 'relative';
+            backClone.style.width = '700px';
+            backClone.style.height = '450px';
+            
+            const cloneFlap = backClone.querySelector('.envelope-flap');
+            if(cloneFlap) cloneFlap.style.transform = 'none';
+            
+            exportZone.appendChild(backClone);
+        }
+
+        async function exportStory() {
+            const btnSpan = document.getElementById('btn-txt-story');
+            const originalHTML = btnSpan.innerHTML;
+            btnSpan.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ...';
+            
+            const storyZone = document.getElementById('story-export-zone');
+            storyZone.innerHTML = ''; 
+            
+            // Create a 1080x1920 container for IG/Social Story
+            const container = document.createElement('div');
+            container.style.width = '1080px';
+            container.style.height = '1920px';
+            container.style.background = 'radial-gradient(circle at center, #2a2a2a 0%, #050505 100%)';
+            container.style.position = 'relative';
+            container.style.display = 'flex';
+            container.style.flexDirection = 'column';
+            container.style.alignItems = 'center';
+            container.style.justifyContent = 'center';
+            container.style.gap = '50px';
+            
+            // Top Item: Envelope Front
+            const envClone = document.querySelector('.envelope-front').cloneNode(true);
+            envClone.style.position = 'relative';
+            envClone.style.transform = 'none'; // remove 3d rotation
+            envClone.style.transform = 'rotate(-3deg) scale(1.2)';
+            envClone.style.boxShadow = '0 30px 60px rgba(0,0,0,0.8)';
+            envClone.style.zIndex = '10';
+            
+            // Bottom Item: Acceptance Letter
+            const letterClone = document.getElementById('render-letter').cloneNode(true);
+            letterClone.style.position = 'relative';
+            letterClone.style.transform = 'rotate(2deg) scale(1.1)';
+            letterClone.style.boxShadow = '0 30px 60px rgba(0,0,0,0.8)';
+            
+            // Add custom watermark to story
+            const watermark = document.createElement('div');
+            watermark.style.position = 'absolute';
+            watermark.style.bottom = '50px';
+            watermark.style.fontFamily = "'Cinzel', serif";
+            watermark.style.fontSize = '36px';
+            watermark.style.fontWeight = 'bold';
+            watermark.style.color = '#D3A625';
+            watermark.style.letterSpacing = '5px';
+            watermark.style.opacity = '0.6';
+            watermark.textContent = currentLang === 'fa' ? 'potterhead.ir' : 'potterheads.org';
+            
+            container.appendChild(envClone);
+            container.appendChild(letterClone);
+            container.appendChild(watermark);
+            storyZone.appendChild(container);
+            
+            try {
+                const canvas = await html2canvas(container, {
+                    scale: 1, // 1080x1920 is already high-res
+                    backgroundColor: '#0a0a0a',
+                    logging: false,
+                    useCORS: true
+                });
+
+                const image = canvas.toDataURL("image/jpeg", 0.9);
+                const link = document.createElement('a');
+                link.download = 'Hogwarts_Story.jpg';
+                link.href = image;
+                link.click();
+            } catch (error) {
+                console.error("Story export failed:", error);
+                alert(currentLang === 'fa' ? "مشکلی در ذخیره استوری پیش آمد." : "Failed to export story.");
+            } finally {
+                btnSpan.innerHTML = originalHTML;
+                storyZone.innerHTML = ''; // Clean up
+            }
+        }
+
+        async function exportImage(elementId, filename) {
+            const element = document.getElementById(elementId);
+            const originalHTML = event.currentTarget.innerHTML;
+            event.currentTarget.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ...';
+            
+            try {
+                const canvas = await html2canvas(element, {
+                    scale: 2, 
+                    backgroundColor: null, 
+                    logging: false,
+                    useCORS: true 
+                });
+
+                const image = canvas.toDataURL("image/png");
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = image;
+                link.click();
+            } catch (error) {
+                console.error("Export failed:", error);
+                alert(currentLang === 'fa' ? "مشکلی در ذخیره تصویر پیش آمد." : "Failed to export image.");
+            } finally {
+                event.currentTarget.innerHTML = originalHTML;
+            }
+        }
+    </script>
+</body>
+</html>
